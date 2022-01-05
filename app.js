@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require("cors");
+require('dotenv').config();
 
 var corsOptions = {
   origin: "http://localhost:8081"
@@ -11,6 +12,8 @@ var corsOptions = {
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var deliverabilityRouter = require("./routes/deliverability.routes");
+
 
 var app = express();
 
@@ -33,14 +36,17 @@ app.use("/slds", express.static(path.join(__dirname, 'node_modules/@salesforce-u
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/api', deliverabilityRouter);
 
 const db = require("./models");
-//db.sequelize.sync();
+db.sequelize.sync();
 
 /*In development, you may need to drop existing tables and re-sync database. Just use force: true as following code:*/
 db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and re-sync db.");
 });
+
+console.log(process.env.DATABASE_URL);
 
 
 // catch 404 and forward to error handler
