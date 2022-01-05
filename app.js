@@ -3,15 +3,24 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const cors = require("cors");
+
+var corsOptions = {
+  origin: "http://localhost:8081"
+};
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
+app.use(cors(corsOptions));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -19,8 +28,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use("/slds", express.static(path.join(__dirname, 'node_modules/@salesforce-ux/design-system')));
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+const db = require("./models");
+//db.sequelize.sync();
+
+/*In development, you may need to drop existing tables and re-sync database. Just use force: true as following code:*/
+db.sequelize.sync({ force: true }).then(() => {
+  console.log("Drop and re-sync db.");
+});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
