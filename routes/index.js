@@ -66,37 +66,6 @@ var authCheck = function(req, res, next) {
   }
 };
 
-// Check if aloha auth is current
-var authCheckExpert = function(req, res, next) {
-            
-  console.log('Aloha: checking authorization');
-  // If Aloha auth is not required, bypass it 
-  //if (process.env.EDT_ALOHA != 1) {       
-  if (process.env.EDT_ALOHA == 1) {       
-      console.log('Aloha: auth Expert not required in this context');
-      return next();
-  }
-  else {                              
-      if (req.signedCookies.tsExpert == "true") {                   
-          console.log('Verified expert status');
-          
-          return next();                      
-      }
-      else {          
-          console.log('Aloha: could verify expert status; redirecting back to home');
-          IsExpert = false;
-          res.redirect('/');
-      }           
-  }
-};
-var basic = auth.basic({
-  realm: "Administration"
-  }, function (username, password, callback) { // Custom authentication method.
-      callback(username === "experts" && password === "manageM0dul3s");
-  }
-);
-
-
 /* GET home page. */
 router.get('/', authCheck, function(req, res, next) {  
   res.render('index', { title: 'Express' });
