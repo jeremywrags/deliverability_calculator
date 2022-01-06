@@ -1,26 +1,32 @@
 const db = require("../models");
-const Deliverability = db.deliverabilities;
+const DeliverabilityConfig = db.deliverabilityConfgs;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
-  // Validate request
-  if (!req.body.title) {
-    res.status(400).send({
-      message: "Content can not be empty!"
-    });
-    return;
-  }
-
+  
   // Create a Tutorial
   const deliverability = {
-    title: req.body.title,
-    description: req.body.description,
-    published: req.body.published ? req.body.published : false
+    
+    "createdBy" :  req.body.createdBy,
+    "description" :  req.body.createdBy,
+    "account" :  req.body.createdBy,
+    "accountURL" :  req.body.createdBy,
+    "oportunity" :  "Big Bet 2022",
+    "oportunityURL" :  "http://salesforce.com",
+    "yearlySendVolume" :  1,
+    "dailySendVolume" :  1,
+    "hourlySendVolume" :  1,
+    "txnDedicatedIP" :  "true",
+    "txnDailySendVolume" :  1,
+    "buFullBranding" :  5,
+    "buPartialBranding" :  2,
+    "dedicatedDB" :  "true",
+    "SSL" :  "true"
   };
 
   // Save Tutorial in the database
-  Deliverability.create(deliverability)
+  DeliverabilityConfig.create(deliverability)
     .then(data => {
       res.send(data);
     })
@@ -36,7 +42,7 @@ exports.findAll = (req, res) => {
     const title = req.query.title;
     var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
   
-    Deliverability.findAll({ where: condition })
+    DeliverabilityConfig.findAll({ where: condition })
       .then(data => {
         res.send(data);
       })
@@ -52,7 +58,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const id = req.params.id;
   
-    Deliverability.findByPk(id)
+    DeliverabilityConfig.findByPk(id)
       .then(data => {
         if (data) {
           res.send(data);
@@ -73,7 +79,7 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
   
-    Deliverability.update(req.body, {
+    DeliverabilityConfig.update(req.body, {
       where: { id: id }
     })
       .then(num => {
@@ -99,7 +105,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     const id = req.params.id;
   
-    Deliverability.destroy({
+    DeliverabilityConfig.destroy({
       where: { id: id }
     })
       .then(num => {
@@ -122,7 +128,7 @@ exports.delete = (req, res) => {
 
 // Delete all Tutorials from the database.
 exports.deleteAll = (req, res) => {
-    Deliverability.destroy({
+  DeliverabilityConfig.destroy({
       where: {},
       truncate: false
     })
@@ -139,7 +145,7 @@ exports.deleteAll = (req, res) => {
 
 // Find all published Tutorials
 exports.findAllPublished = (req, res) => {
-    Deliverability.findAll({ where: { published: true } })
+  DeliverabilityConfig.findAll({ where: { published: true } })
       .then(data => {
         res.send(data);
       })

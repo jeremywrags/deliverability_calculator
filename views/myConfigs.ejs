@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Deliverability Calculator</title>
+    <link rel="stylesheet" type="text/css" href="/slds/assets/styles/salesforce-lightning-design-system.min.css" />
+    <link rel="shortcut icon" type="image/png" href="/images/experts-logo.png" />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <!-- pull in nav from partials folder -->
+    <nav class="slds-col slds-size--1-of-1">
+    <div style="height: 3rem;">
+      <div class="slds-context-bar">
+        <div class="slds-context-bar__primary">
+          <div class="slds-context-bar__item slds-context-bar__dropdown-trigger slds-dropdown-trigger slds-dropdown-trigger_click slds-no-hover">
+            <div class="slds-context-bar__icon-action">
+              <button class="slds-button slds-icon-waffle_container slds-context-bar__button" title="Home" onclick="document.location='/';">
+                <span class="slds-icon-waffle">
+                  <span class="slds-r1"></span>
+                  <span class="slds-r2"></span>
+                  <span class="slds-r3"></span>
+                  <span class="slds-r4"></span>
+                  <span class="slds-r5"></span>
+                  <span class="slds-r6"></span>
+                  <span class="slds-r7"></span>
+                  <span class="slds-r8"></span>
+                  <span class="slds-r9"></span>
+                </span>
+                <span class="slds-assistive-text">Open App Launcher</span>
+              </button>
+            </div>
+            <span class="slds-context-bar__label-action slds-context-bar__app-name">
+              <span class="slds-text-heading_small"  title="App Name">Deliverability Calculator</span>
+            </span>
+          </div>
+        </div>
+        <nav class="slds-context-bar__secondary" role="navigation">
+          <ul class="slds-grid">
+            <li class="slds-context-bar__item">
+              <a href="/myConfigs" class="slds-context-bar__label-action" title="Real Time View">
+                <span class="slds-truncate" title="Home">Saved Configs</span>
+              </a>
+            </li>
+            <li class="slds-context-bar__item">
+              <a href="/filtered" class="slds-context-bar__label-action" title="Filtered View">
+                <span class="slds-truncate" title="Home">General Details</span>
+              </a>
+            </li>
+            <li class="slds-context-bar__item">
+              <a href="/analytics" class="slds-context-bar__label-action" title="Analytics View">
+                <span class="slds-truncate" title="Home">Supporting Links</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+  
+  <!-- User Icon & Count -->
+        <span class="slds-icon_container slds-icon-utility-announcement">
+        <svg class="slds-icon slds-icon-text-success slds-icon_small slds-m-top_xx-small slds-m-right_small" aria-hidden="true">
+        <use xlink:href="/slds/assets/icons/utility-sprite/svg/symbols.svg#user"></use>
+        </svg>
+        </span>
+  
+          <div class="slds-m-right_large slds-m-top_x-small">
+            <p class="slds-text-color_success" id="userCount"></p>
+          </div>
+  <!-- /User Icon & Count -->
+      </div>
+    </div>
+  </nav>
+  
+    <!-- /Navigation -->
+  
+    <!-- Page -->
+    <div class="demo-only demo-only--sizing slds-grid slds-wrap">
+      <div class="slds-size_1-of-2">
+        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">asdfasdf</div>
+      </div>
+      <div class="slds-size_1-of-2">
+        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">.slds-size_1-of-2</div>
+      </div>      
+    </div>
+  
+    <!-- /Page -->
+  
+    <script src="javascripts/main.js"></script>
+  </body>
+</html>

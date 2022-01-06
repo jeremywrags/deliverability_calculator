@@ -14,12 +14,16 @@
     "ejs": "~2.6.1",
     "express": "~4.16.1",
     "fs": "^0.0.1-security",
+    "http-auth": "^4.1.9",
     "http-errors": "~1.6.3",
     "https": "^1.0.0",
     "jsforce": "^1.11.0",
     "morgan": "~1.9.1",
+    "path": "^0.12.7",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.12.5"
+    "salesforce-node-client": "^1.2.3",
+    "sequelize": "^6.12.5",
+    "url": "^0.11.0"
   }
 }

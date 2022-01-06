@@ -6,6 +6,6 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.deliverabilities = require("./deliverability.model.js")(sequelize, Sequelize);
+db.deliverabilityConfgs = require("./deliverabilityConfig.model.js")(sequelize, Sequelize);
 
 module.exports = db;

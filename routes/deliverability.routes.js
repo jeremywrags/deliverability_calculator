@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 
-const deliverabilties = require("../controllers/deliverability.controller.js");
+const deliverabilties = require("../controllers/deliverabilityConfig.controller.js");
     
 // Create a new Tutorial
 router.post("/", deliverabilties.create);
