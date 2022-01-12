@@ -1,4 +1,4 @@
-const { resolve } = require("path/posix");
+//const { resolve } = require("path/posix");
 const db = require("../models");
 const DeliverabilityConfig = db.deliverabilityConfgs;
 const Op = db.Sequelize.Op;
