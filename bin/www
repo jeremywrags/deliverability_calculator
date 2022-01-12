@@ -22,16 +22,16 @@ app.set('port', port);
  */
 var server;
 
-if(process.env.ENVIRONMENT == "DEV"){
-  const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
-  };
-  server = https.createServer(options, app);
-}
-else{
+//if(process.env.ENVIRONMENT == "DEV"){
+//  const options = {
+//    key: fs.readFileSync('key.pem'),
+//    cert: fs.readFileSync('cert.pem')
+//  };
+//  server = https.createServer(options, app);
+//}
+//else{
   server = http.createServer(app);
-}
+//}
 
 
 

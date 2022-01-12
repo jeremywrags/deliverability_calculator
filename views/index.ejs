@@ -156,11 +156,30 @@
       })
       $("#btnNew").on("click", function () {
         $("#modalWrapper").css("display", "");
-        
+      });
+      
+
+      $("#btnModal_save").on("click", function () {                       
         $.ajax({
           url : "/create",
           type: "POST",
-          data: {name:'yogesh',salary: 35000,email: 'yogesh@makitweb.com'},
+          data: { 
+            createdBy:' <%= UserEmail %>', 
+            description: $("#form-element-description").val(),
+            account: $("#form-element-account").val(),
+            accountURL: $("#form-element-accountURL").val(),
+            oportunity: $("#form-element-oportunity").val(),
+            oportunityURL: $("#form-element-oportunityURL").val(),
+            yearlySendVolume: $("#form-element-yearlySendVolume").val(),
+            dailySendVolume: $("#form-element-dailySendVolume").val(),
+            hourlySendVolume: $("#form-element-hourlySendVolume").val(),
+            txnDedicatedIP: $("#form-element-txnDedicatedIP").prop('checked'),
+            txnDailySendVolume: $("#form-element-txnDailySendVolume").val(),
+            buFullBranding: $("#form-element-buFullBranding").val(),
+            buPartialBranding: $("#form-element-buPartialBranding").val(),
+            dedicatedDB: $("#form-element-dedicatedDB").prop('checked'),
+            SSL: $("#form-element-SSL").prop('checked')
+          },
           success: function(row, textStatus, jqXHR)
           {
             
@@ -170,7 +189,7 @@
       
           }
         });
-
+        $("#modalWrapper").css("display", "none");
       })
       $(document.body).on("click", ".configLink", function () {
                 
@@ -525,27 +544,32 @@
             <input type="text" id="form-element-txnDailySendVolume" placeholder="Transactional Daily Send Volume" class="slds-input" />
           </div>
           <div class="slds-form-element__control slds-p-around_x-small">
-            <input type="text" id="form-element-txnDedicatedIP" placeholder="Number of BU's that require full branding" class="slds-input" />
+            <input type="text" id="form-element-buFullBranding" placeholder="Number of BU's that require full branding" class="slds-input" />
           </div>
           <div class="slds-form-element__control slds-p-around_x-small">
-            <input type="text" id="form-element-txnDedicatedIP" placeholder="Number of BU's that require partial branding" class="slds-input" />
+            <input type="text" id="form-element-buPartialBranding" placeholder="Number of BU's that require partial branding" class="slds-input" />
           </div>
           <div class="slds-checkbox slds-p-around_x-small">
-            <input type="checkbox" name="options" id="form-element-includeSSL" value="checkbox-unique-id-446"/>
-            <label class="slds-checkbox__label" for="form-element-includeSSL">
+            <input type="checkbox" name="options" id="form-element-SSL" value="checkbox-unique-id-446"/>
+            <label class="slds-checkbox__label" for="form-element-SSL">
               <span class="slds-checkbox_faux"></span>
               <span class="slds-form-element__label">Are you including 2 SSL SKU's per SAP?</span>
             </label>
           </div>
-          <div class="slds-form-element__control slds-p-around_x-small">
-            <input type="text" id="form-element-txnDedicatedIP" placeholder="Are you needeing a Dedicated Database?" class="slds-input" />
+          <div class="slds-checkbox slds-p-around_x-small">
+            <input type="checkbox" name="options" id="form-element-dedicatedDB" value="checkbox-unique-id-446"/>
+            <label class="slds-checkbox__label" for="form-element-dedicatedDB">
+              <span class="slds-checkbox_faux"></span>
+              <span class="slds-form-element__label">Will you need a Dedicated DB</span>
+            </label>
           </div>
+          
         </div>
       </div>
     </div>
     <div class="slds-modal__footer">
       <button id="btnModal_cancel" class="slds-button slds-button_neutral" aria-label="Cancel and close">Cancel</button>
-      <button class="slds-button slds-button_brand">Save</button>
+      <button id="btnModal_save" class="slds-button slds-button_brand">Save</button>
     </div>
   </div>
 </section>

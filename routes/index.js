@@ -134,55 +134,6 @@ router.post("/create", function(req, res, next){
   });
 });
 
-router.get("/createTest", function(req, res, next){
-  
-  //res.json(test(req));
-  var result1 = deliverabilitySpecs.findAll2();
-  var result2 = result1.then(data => {
-    console.log(data[0].dailyMaxPerIP);
-    let cfgObject = {
-      "createdBy" :  "jragsdale@salesforce.com",
-      "description" :  "My first test config",
-      "account" :  "Tire Discounter",
-      "accountURL" :  "http://salesforce.com",
-      "oportunity" :  "Grammarly Upsell",
-      "oportunityURL" :  "http://salesforce.com",
-      "yearlySendVolume" :  25000000000,
-      "dailySendVolume" :  25000000,
-      "hourlySendVolume" :  1325000,
-      "txnDedicatedIP" :  "true",
-      "txnDailyVolume" :  250000000,
-      "buFullBranding" :  5,
-      "buPartialBranding" :  2,
-      "dedicatedDB" :  "true",
-      "SSL" :  "true",    
-      "TotalCommercialIPs": Math.round((data[0].dailyMaxPerIP/250000)),      
-      "TotalTransactionalIPs": Math.round((data[0].dailyMaxPerIP/8000000)),
-      "TotalPrivateDomains": 2,
-      "TotalSAPs" : 5, 
-      "DedicatedDB" : 25000000000 > data[0].ddbEmailsPerYear ? 'true' : 25000000  > data[0].ddbEmailsPerDay ? 'true' : 'false',
-      "TotalSSL" : 5 * 2
-    };     
-    console.log(cfgObject);
-    return deliverabiltyConfigs.create2(cfgObject)
-  });
-  return Promise.all([result1, result2]).then(function([res1, res2]) {
-    res.json({result1: res1, result2: res2})    
-  });
-});
-
-
-router.post('/calculate', authCheck, function(req, res, next){
-  var post_body = req.body;
-  res.send("success");
-})
-
-
-router.get('/myConfigs', function(req, res, next) {
-  
-  res.render('myConfigs', { title: 'Express' });
-});
-
 
 module.exports = router;
 
