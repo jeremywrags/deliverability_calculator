@@ -19,13 +19,13 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING
       },
       yearlySendVolume: {
-        type: Sequelize.INTEGER
+        type: Sequelize.BIGINT
       },
       dailySendVolume: {
-        type: Sequelize.INTEGER
+        type: Sequelize.BIGINT
       },
       hourlySendVolume: {
-        type: Sequelize.INTEGER
+        type: Sequelize.BIGINT
       },
       txnDedicatedIP: {
         type: Sequelize.BOOLEAN
@@ -44,7 +44,31 @@ module.exports = (sequelize, Sequelize) => {
       },
       SSL: {
         type: Sequelize.BOOLEAN
-      }      
+      },     
+      TotalCommercialIPs: {
+        type: Sequelize.INTEGER
+      },
+      TotalTransactionalIPs: {
+        type: Sequelize.INTEGER
+      },      
+      TotalPrivateDomains: {
+        type: Sequelize.INTEGER
+      },     
+      TotalSAPs: {
+        type: Sequelize.INTEGER
+      },      
+      DedicatedDB: {
+        type: Sequelize.BOOLEAN
+      },      
+      TotalDedicatedMTAs: {
+        type: Sequelize.INTEGER
+      },      
+      NeedDedicatedMTA: {
+        type: Sequelize.BOOLEAN
+      },
+      TotalSSL: {
+        type: Sequelize.INTEGER
+      }   
     });
   
     return DeliverabilityConfig;

@@ -8,7 +8,7 @@ const SalesforceClient = require('salesforce-node-client');
 
 const sfdcConfig = {
     domain: process.env.sfDomain,
-    callbackUrl: process.env.appCallbackURL,
+    callbackUrl: process.env.appCallbackUrl,
     consumerKey: process.env.consumerKey,
     consumerSecret: process.env.consumerSecret,
     apiVersion: 'v41.0'
@@ -33,6 +33,7 @@ app.get('/callback', function(req, res) {
                     // Set user cookies
                     res.cookie('tsToken', Date.now(), {overwrite: true, signed: true});                                                                                                 
                     res.cookie('tsUser', JSON.parse(userDataL).email, {overwrite: true, signed: true});                                     
+                    res.cookie('tsUserName', JSON.parse(userDataL).display_name, {overwrite: true, signed: true});                                     
                     
                     // Get IsExpert flag                                
                     try {

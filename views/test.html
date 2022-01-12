@@ -1,0 +1,156 @@
+<ul>
+          <% data.forEach(function(row) { %>
+            <li>
+              <a class="configLink" id='configLink_<%= row.id %>' cName='<%= row.oportunity%>'>
+                <%= row.oportunity %>
+              </a>
+            </li>
+            <% }) %>
+        </ul>
+
+
+
+         <% data.forEach(function(row) { %>
+              <div id='config_<%= row.id %>' class="configContainer slds-is-collapsed">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                  <tr>
+                    <td>Description</td>
+                    <td>
+                      <%= row.description %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Account</td>
+                    <td><a href="<%= row.accountURL %>">
+                        <%= row.account %>
+                      </a></td>
+                  </tr>
+                  <tr>
+                    <td>Oportunity</td>
+                    <td><a href="<%= row.oportunityURL %>">
+                        <%= row.oportunity %>
+                      </a></td>
+                  </tr>
+                  <tr>
+                    <td>Yearly send Volume</td>
+                    <td>
+                      <%= row.yearlySendVolume %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Daily send Volume</td>
+                    <td>
+                      <%= row.dailySendVolume %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Hourly send Volume</td>
+                    <td>
+                      <%= row.hourlySendVolume %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Transactional Dedicated IP's</td>
+                    <td>
+                      <%= row.txnDedicatedIP %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Transactional Send Volume</td>
+                    <td>
+                      <%= row.txnDailySendVolume %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>BU's with full branding</td>
+                    <td>
+                      <%= row.buFullBranding %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>BU's with partial branding</td>
+                    <td>
+                      <%= row.buPartialBranding %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Dedicated Database</td>
+                    <td>
+                      <%= row.dedicatedDB %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>SSL</td>
+                    <td>
+                      <%= row.SSL %>
+                    </td>
+                  </tr>
+                </table>
+
+              </div>
+              <% }) %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              <ul class="slds-vertical-tabs__nav" role="tablist" aria-orientation="vertical">
+                <% packs.forEach(function(pack, i) { %>
+                  <li class="slds-vertical-tabs__nav-item <%= i == 0 ? 'slds-is-active' : '' %>"
+                    title="Tab <%= i+1 %>" role="presentation" id="tabNavli_<%= i%>">
+                    <a class="slds-vertical-tabs__link" href="javascript:void(0)" role="tab"
+                      tabindex="<%= i == 0 ? '0' : '-1' %>" aria-selected="<%= i == 0 ? 'true' : 'false' %>"
+                      aria-controls="slds-vertical-tabs-<%= i %>" id="tabNav_<%= i %>">
+                      <span class="slds-vertical-tabs__left-icon"></span>
+                      <span class="slds-truncate" title="<%= pack.package%>">
+                        <%= pack.package%>
+                      </span>
+                      <span class="slds-vertical-tabs__right-icon"></span>
+                    </a>
+                  </li>
+                  <% }) %>
+              </ul>
+              <% packs.forEach(function(pack, i) { %>
+                <div class="slds-vertical-tabs__content <%= i == 0 ? 'slds-show' : 'slds-hide' %>"
+                  id="tabContainer_<%= i %>" role="tabpanel" aria-labelledby="slds-vertical-tabs-<%= i %>__nav">
+                  <div class="slds-text-longform">
+                    <h3 class="slds-text-heading_medium">What is included in the <%= pack.package%> package</h3>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                      <tr>
+                        <td>Commercial IP's</td>
+                        <td>
+                          <%= pack.commercialIPs%>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Transactional IP's</td>
+                        <td>
+                          <%= pack.transactionalIPs%>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Private Domains</td>
+                        <td>
+                          <%= pack.privateDomains%>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>SAP's included</td>
+                        <td>
+                          <%= pack.SAPs%>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <% }) %>
+            </div>

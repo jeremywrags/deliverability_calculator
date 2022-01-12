@@ -47,11 +47,11 @@ const db = require("./models");
 db.sequelize.sync();
 
 /*In development, you may need to drop existing tables and re-sync database. Just use force: true as following code:*/
-if(process.env.ENVIRONMENT == "DEV"){
-  db.sequelize.sync({ force: true }).then(() => {
-    console.log("Drop and re-sync db.");
-  });
-}
+//if(process.env.ENVIRONMENT == "DEV"){
+//  db.sequelize.sync({ force: true }).then(() => {
+//    console.log("Drop and re-sync db.");
+//  });
+//}
 
 console.log(process.env.DATABASE_URL);
 

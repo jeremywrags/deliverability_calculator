@@ -1,6 +1,23 @@
+const { resolve } = require("path/posix");
 const db = require("../models");
 const DeliverabilityConfig = db.deliverabilityConfgs;
 const Op = db.Sequelize.Op;
+
+// Create and Save a new Tutorial
+exports.create2 = (dConfig) => {
+   
+  // Save Tutorial in the database
+  DeliverabilityConfig.create(dConfig)
+    .then(data => {
+      return data
+    })
+    .catch(err => {
+      return {
+        message:
+          err.message || "Some error occurred while createing this config."
+      };
+    });
+};
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
@@ -9,20 +26,20 @@ exports.create = (req, res) => {
   const deliverability = {
     
     "createdBy" :  req.body.createdBy,
-    "description" :  req.body.createdBy,
-    "account" :  req.body.createdBy,
-    "accountURL" :  req.body.createdBy,
-    "oportunity" :  "Big Bet 2022",
-    "oportunityURL" :  "http://salesforce.com",
-    "yearlySendVolume" :  1,
-    "dailySendVolume" :  1,
-    "hourlySendVolume" :  1,
-    "txnDedicatedIP" :  "true",
-    "txnDailySendVolume" :  1,
-    "buFullBranding" :  5,
-    "buPartialBranding" :  2,
-    "dedicatedDB" :  "true",
-    "SSL" :  "true"
+    "description" :  req.body.description,
+    "account" :  req.body.account,
+    "accountURL" :  req.body.accountURL,
+    "oportunity" :  req.body.oportunity,
+    "oportunityURL" :  req.body.oportunityURL,
+    "yearlySendVolume" :  req.body.yearlySendVolume,
+    "dailySendVolume" :  req.body.dailySendVolume,
+    "hourlySendVolume" :  req.body.hourlySendVolume,
+    "txnDedicatedIP" :  req.body.txnDedicatedIP,
+    "txnDailySendVolume" :  req.body.txnDailySendVolume,
+    "buFullBranding" :  req.body.buFullBranding,
+    "buPartialBranding" :  req.body.buPartialBranding,
+    "dedicatedDB" :  req.body.dedicatedDB,
+    "SSL" :  req.body.SSL,
   };
 
   // Save Tutorial in the database
@@ -38,9 +55,40 @@ exports.create = (req, res) => {
     });
 };
 
+exports.findAll2 = (createdBy) => {  
+  var condition = createdBy ? { createdBy: { [Op.iLike]: `%${createdBy}%` } } : null;
+
+  return DeliverabilityConfig.findAll({ where: condition })
+    .then(data => {
+      return data;
+    })
+    .catch(err => {
+      return {
+        message:
+          err.message || "Some error occurred while retrieving tutorials."
+      };
+    });
+};
+
+exports.getConfigs = (createdBy) => {  
+  var condition = createdBy ? { createdBy: { [Op.iLike]: `%${createdBy}%` } } : null;
+
+  return DeliverabilityConfig.findAll({
+    attributes: ['id','description']},
+    { where: condition }
+  ).then(data => {
+      return data;
+  }).catch(err => {
+      return {
+        message:
+          err.message || "Some error occurred while retrieving tutorials."
+      };
+  });
+};
+
 exports.findAll = (req, res) => {
-    const title = req.query.title;
-    var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
+    const createdBy = req.query.createdBy;
+    var condition = createdBy ? { createdBy: { [Op.iLike]: `%${createdBy}%` } } : null;
   
     DeliverabilityConfig.findAll({ where: condition })
       .then(data => {
@@ -53,6 +101,22 @@ exports.findAll = (req, res) => {
         });
       });
   };
+
+
+  exports.findConfig = (id) => {        
+    return DeliverabilityConfig.findByPk(id)
+      .then(data => {
+        return data;
+      })
+      .catch(err => {
+        return {
+          message:
+            err.message || "Some error occurred while retrieving Config."
+        };
+      });
+  };
+
+
 
 // Find a single Tutorial with an id
 exports.findOne = (req, res) => {

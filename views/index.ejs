@@ -1,23 +1,348 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Deliverability Calculator</title>
-    <link rel="stylesheet" type="text/css" href="/slds/assets/styles/salesforce-lightning-design-system.min.css" />
-    <link rel="shortcut icon" type="image/png" href="/images/experts-logo.png" />
-    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-  </head>
-  <body>
-    <!-- Navigation -->
-    <!-- pull in nav from partials folder -->
-    <nav class="slds-col slds-size--1-of-1">
+
+<head>
+  <title>Deliverability Calculator</title>
+  <link rel="stylesheet" type="text/css" href="/slds/assets/styles/salesforce-lightning-design-system.min.css" />
+  <link rel="shortcut icon" type="image/png" href="/images/experts-logo.png" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+
+      $.ajax({
+        url : "/getConfigs",
+        type: "GET",
+        data: {},
+        success: function(data, textStatus, jqXHR)
+        {
+            //alert(data);
+            var htm = "<ul>";
+            data.forEach(row => {
+              htm += '<li><a class="configLink" id="configLink_' + row.id + '" cName="' + row.description + '">' + row.description + '</a></li>';
+            });                                       
+            htm += "</ul>"            
+            $("#configList").html(htm);            
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+    
+        }
+      });
+
+      $.ajax({
+        url : "/getPacks",
+        type: "GET",
+        data: {},
+        success: function(data, textStatus, jqXHR)
+        {
+          var htm = `<ul class="slds-vertical-tabs__nav" role="tablist" aria-orientation="vertical">`
+          var packages = []
+          data.forEach((pack, i) => { 
+              packages.push(pack.package);
+              
+              htm += '<li class="slds-vertical-tabs__nav-item '
+              htm += i == 0 ? "slds-is-active" : "";
+              htm += ' title="Tab' + (i + 1) + '" role="presentation" id="tabNavli_' + i + '">';
+              htm += '<a class="slds-vertical-tabs__link" href="javascript:void(0)" role="tab" tabindex=';
+              htm += i == 0 ? "0" : "-1";
+              htm += '" aria-selected="' + i == 0 ? "true" : "false" + '" aria-controls="slds-vertical-tabs-'+ i + '" id="tabNav_' + i + '">';
+              htm += '<span class="slds-vertical-tabs__left-icon"></span><span class="slds-truncate" title="' + pack.package + '">' + pack.package + '</span>';
+              htm += '<span class="slds-vertical-tabs__right-icon"></span></a></li>';
+              
+          });          
+          
+          htm += '</ul>';                               
+          $("#packages").val(JSON.stringify(packages)); //store array
+          
+          data.forEach((pack, i) => { 
+            htm += '<div class="slds-vertical-tabs__content ';
+            htm += i == 0 ? 'slds-show' : 'slds-hide';
+            htm += '" id="tabContainer_' + i +'" role="tabpanel" aria-labelledby="slds-vertical-tabs-' + i + '__nav">';
+            htm += '<div class="slds-text-longform"><h3 class="slds-text-heading_medium">What is included in the ' + pack.package + ' package</h3>';
+            htm += `<table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                    <thead>
+                    <tr class="slds-line-height_reset">
+                    <th class="" scope="col">
+                      <div class="slds-truncate" title="Opportunity Name">Item</div>
+                    </th>
+                    <th class="" scope="col">
+                      <div class="slds-truncate" title="Opportunity Name">Included</div>
+                    </th>
+                    <th class="" scope="col">
+                      <div class="slds-truncate" title="Opportunity Name">Total Recommended</div>
+                    </th>
+                    </thead>
+                    <tr>
+                      <td>Commercial IP's</td>
+                      <td>
+                        ` + pack.commercialIPs + `
+                      </td>
+                      <td><span id="` + pack.package + `_rCommercialIPs"></span>
+                    </tr>
+                    <tr>
+                      <td>Transactional IP's</td>
+                      <td>
+                        ` + pack.transactionalIPs+ `
+                      </td>
+                      <td><span id="` + pack.package + `_rCommercialtxnIPs"></span>
+                    </tr>
+                    <tr>
+                      <td>Private Domains</td>
+                      <td>
+                        ` +pack.privateDomains+ `
+                      </td>
+                      <td><span id="` + pack.package + `_rPrivateDomains"></span>
+                    </tr>
+                    <tr>
+                      <td>SAP's included</td>
+                      <td>
+                        ` + pack.SAPs+ `
+                      </td>
+                      <td><span id="` + pack.package + `_rSAP"></span>
+                    </tr>
+                  </table>
+                </div>
+              </div>`
+          });
+
+
+
+
+          
+          $("#tabWrapper").html(htm);            
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+    
+        }
+      });
+
+
+      //Handle Tab Click
+      $(document.body).on("click", ".slds-vertical-tabs__link", function () {
+        var id = $(this).attr("id").split("_")[1];
+        //set active tab nav
+        $(".slds-vertical-tabs__link").attr("aria-selected", "false")
+        $(this).attr("aria-selected", "true")
+        $(".slds-vertical-tabs__nav-item").removeClass("slds-is-active");
+        $("#tabNavli_" + id).addClass("slds-is-active");
+
+
+        //remove show from all tabContainers, then add hide to all containers
+        $(".slds-vertical-tabs__content").removeClass("slds-show");
+        $(".slds-vertical-tabs__content").addClass("slds-hide");
+        //now show the specific tab container
+        $("#tabContainer_" + id).addClass("slds-show")
+        $("#tabContainer_" + id).removeClass("slds-hide")
+
+      })
+
+
+      $("#form-element-txnDedicatedIP").on("click", function(){        
+        if($(this).prop("checked")){
+          $("#txnWrapper").css("display", "");
+        }else{
+          $("#txnWrapper").css("display", "none");
+        }
+        
+        
+      })      
+
+      $("#btnModal_cancel").on("click", function(){
+        $("#modalWrapper").css("display", "none");
+      })
+      $("#btnNew").on("click", function () {
+        $("#modalWrapper").css("display", "");
+        
+        $.ajax({
+          url : "/create",
+          type: "POST",
+          data: {name:'yogesh',salary: 35000,email: 'yogesh@makitweb.com'},
+          success: function(row, textStatus, jqXHR)
+          {
+            
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+      
+          }
+        });
+
+      })
+      $(document.body).on("click", ".configLink", function () {
+                
+        //Get the id of the clicked config
+        var id = $(this).attr("id").split("_")[1];
+        $.ajax({
+          url : "/getConfig",
+          type: "POST",
+          data: {configID: id},
+          success: function(row, textStatus, jqXHR)
+          {            
+            var htm = ` <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+              <tr>
+                <td>Description</td>
+                <td>` + row.description + `</td>
+              </tr>
+              <tr>
+                <td>Account</td>
+                <td><a href="` + row.accountURL + `">`+ row.account + `</a></td>
+              </tr>
+              <tr>
+                <td>Oportunity</td>
+                <td><a href="` + row.oportunityURL + `">` + row.oportunity +`</a></td>
+              </tr>
+              <tr>
+                <td>Yearly send Volume</td>
+                <td>`+ row.yearlySendVolume +`</td>
+              </tr>
+              <tr>
+                <td>Daily send Volume</td>
+                <td>
+                  `+ row.dailySendVolume + `
+                </td>
+              </tr>
+              <tr>
+                <td>Hourly send Volume</td>
+                <td>
+                  `+ row.hourlySendVolume + `
+                </td>
+              </tr>
+              <tr>
+                <td>Transactional Dedicated IP's</td>
+                <td>
+                  `+ row.txnDedicatedIP + `
+                </td>
+              </tr>
+              <tr>
+                <td>Transactional Send Volume</td>
+                <td>
+                  `+ row.txnDailySendVolume + `
+                </td>
+              </tr>
+              <tr>
+                <td>BU's with full branding</td>
+                <td>
+                  `+ row.buFullBranding + `
+                </td>
+              </tr>
+              <tr>
+                <td>BU's with partial branding</td>
+                <td>
+                  `+ row.buPartialBranding + `
+                </td>
+              </tr>
+              <tr>
+                <td>Dedicated Database</td>
+                <td>
+                  `+ row.dedicatedDB + `
+                </td>
+              </tr>
+              <tr>
+                <td>SSL</td>
+                <td>
+                  `+ row.SSL + `
+                </td>
+              </tr>
+              <tr>
+                <td>Total Commercial IP's</td>
+                <td>
+                  `+ row.TotalCommercialIPs + `
+                </td>
+              </tr>
+              <tr>
+                <td>Total Transactional IP's</td>
+                <td>
+                  `+ row.TotalTransactionalIPs + `
+                </td>
+              </tr>
+              <tr>
+                <td>Total Private Domains</td>
+                <td>
+                  `+ row.TotalPrivateDomains + `
+                </td>
+              </tr>
+              <tr>
+                <td>Total SAP's</td>
+                <td>
+                  `+ row.TotalSAPs + `
+                </td>
+              </tr>
+              <tr>
+                <td>Dedicated DB required</td>
+                <td>
+                  `+ row.DedicatedDB + `
+                </td>
+              </tr>
+              <tr>
+                <td>Total SSL's needed</td>
+                <td>
+                  `+ row.TotalSSL + `
+                </td>
+              </tr>
+              
+              
+            </table>
+            `                                            
+            $("#configDetail").html(htm);    
+            
+            var packs = JSON.parse($("#packages").val());
+            packs.forEach((pack) => {                                     
+              $("#" + pack + "_rCommercialIPs").text(row.TotalCommercialIPs - $("#" + pack + "_rCommercialIPs").closest('td').prev('td').text())
+              $("#" + pack + "_rCommercialtxnIPs").text(row.TotalTransactionalIPs - $("#" + pack + "_rCommercialtxnIPs").closest('td').prev('td').text())
+              $("#" + pack + "_rPrivateDomains").text(row.TotalPrivateDomains - $("#" + pack + "_rPrivateDomains").closest('td').prev('td').text())
+              $("#" + pack + "_rSAP").text(row.TotalSAPs - $("#" + pack + "_rSAP").closest('td').prev('td').text())
+            });            
+              
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+      
+          }
+        });
+        
+        
+        /*var previous = $("#activeConfig").val();
+
+        //Set the header text
+        $("#configName").text(cName);
+
+        //hide the previous active config
+        if (previous) {
+          $("#config_" + previous).removeClass("slds-is-expanded")
+          $("#config_" + previous).addClass("slds-is-collapsed")
+        }
+        //Set the Active config and make it visible 
+        $("#activeConfig").val(id);
+        $("#config_" + id).removeClass("slds-is-collapsed")
+        $("#config_" + id).addClass("slds-is-expanded")
+        $("#tabContainer").removeClass("slds-hidden")
+        //var data = "<%= //data[0] %>";
+        //var record = data;     
+        */   
+      })
+    });
+  </script>
+</head>
+
+<body>
+  <input type="hidden" id="activeConfig" value="">
+  <input type="hidden" id="packages" value="">
+
+  <!-- Navigation -->
+  <!-- pull in nav from partials folder -->
+  <nav class="slds-col slds-size--1-of-1">
     <div style="height: 3rem;">
       <div class="slds-context-bar">
         <div class="slds-context-bar__primary">
-          <div class="slds-context-bar__item slds-context-bar__dropdown-trigger slds-dropdown-trigger slds-dropdown-trigger_click slds-no-hover">
+          <div
+            class="slds-context-bar__item slds-context-bar__dropdown-trigger slds-dropdown-trigger slds-dropdown-trigger_click slds-no-hover">
             <div class="slds-context-bar__icon-action">
-              <button class="slds-button slds-icon-waffle_container slds-context-bar__button" title="Home" onclick="document.location='/';">
+              <button class="slds-button slds-icon-waffle_container slds-context-bar__button" title="Home"
+                onclick="document.location='/';">
                 <span class="slds-icon-waffle">
                   <span class="slds-r1"></span>
                   <span class="slds-r2"></span>
@@ -33,7 +358,7 @@
               </button>
             </div>
             <span class="slds-context-bar__label-action slds-context-bar__app-name">
-              <span class="slds-text-heading_small"  title="App Name">Deliverability Calculator</span>
+              <span class="slds-text-heading_small" title="App Name">Deliverability Calculator</span>
             </span>
           </div>
         </div>
@@ -56,36 +381,177 @@
             </li>
           </ul>
         </nav>
-  
-  <!-- User Icon & Count -->
+
+        <!-- User Icon & Count -->
         <span class="slds-icon_container slds-icon-utility-announcement">
-        <svg class="slds-icon slds-icon-text-success slds-icon_small slds-m-top_xx-small slds-m-right_small" aria-hidden="true">
-        <use xlink:href="/slds/assets/icons/utility-sprite/svg/symbols.svg#user"></use>
-        </svg>
+          <svg class="slds-icon slds-icon-text-success slds-icon_small slds-m-top_xx-small slds-m-right_small"
+            aria-hidden="true">
+            <use xlink:href="/slds/assets/icons/utility-sprite/svg/symbols.svg#user"></use>
+          </svg>
         </span>
-  
-          <div class="slds-m-right_large slds-m-top_x-small">
-            <p class="slds-text-color_success" id="userCount"></p>
-          </div>
-  <!-- /User Icon & Count -->
+
+        <div class="slds-m-right_large slds-m-top_x-small">
+          <p class="slds-text-color_success" id="userCount">
+            <%= UserEmail %>
+          </p>
+        </div>
+        <!-- /User Icon & Count -->
       </div>
     </div>
   </nav>
-  
-    <!-- /Navigation -->
-  
-    <!-- Page -->
-    <div class="demo-only demo-only--sizing slds-grid slds-wrap">
-      <div class="slds-size_1-of-2">
-        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">.slds-size_1-of-2</div>
+  <!-- /Navigation -->
+
+  <div class="demo-only demo-only--sizing slds-grid slds-wrap">
+
+  <div class="slds-size_1-of-5">
+    <article class="slds-card">
+      <div class="slds-card__header slds-grid">
+        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+          <div class="slds-media__figure">
+            <span class="slds-icon_container slds-icon-standard-account" title="account">
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"></use>
+              </svg>
+              <span class="slds-assistive-text">My Saved Configs</span>
+            </span>
+          </div>
+          <div class="slds-media__body">
+            <h2 class="slds-card__header-title">
+              <a href="#" class="slds-card__header-link slds-truncate" title="Accounts">
+                <span>My Saved Configs</span>
+              </a>
+            </h2>
+          </div>
+          <div class="slds-no-flex">
+            <button id="btnNew" class="slds-button slds-button_neutral">New</button>
+          </div>
+        </header>
       </div>
-      <div class="slds-size_1-of-2">
-        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small">.slds-size_1-of-2</div>
-      </div>      
+      <div id="configList" class="slds-card__body slds-card__body_inner">
+        
+
+      </div>
+    </article>
+  </div>
+  <div class="slds-size_4-of-5">
+    <article class="slds-card slds-m-right_xx-small" >
+      <div class="slds-card__header slds-grid">
+        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+          <div class="slds-media__figure">
+            <span class="slds-icon_container slds-icon-standard-account" title="account">
+              <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"></use>
+              </svg>
+              <span class="slds-assistive-text">Config Details</span>
+            </span>
+          </div>
+          <div class="slds-media__body">
+            <h2 class="slds-card__header-title">
+              <a href="#" class="slds-card__header-link slds-truncate" title="Accounts">
+                <span id="configName"></span>
+              </a>
+            </h2>
+          </div>
+
+        </header>
+      </div>
+      <div class="slds-card__body slds-card__body_inner">
+        <div class="slds-grid slds-wrap">
+          <div id="configDetail" class="slds-size_1-of-3">
+            
+          </div>
+          <div class="slds-size_2-of-3 ">
+            
+              <div id="tabWrapper" class="slds-vertical-tabs">
+              </div> 
+            
+          </div>
+          <div class="slds-size_3-of-3 slds-m-top_large">              
+             
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+
+<div id="modalWrapper" aria-hidden="true" style="display: none;">
+<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" class="slds-modal slds-fade-in-open">
+  <div class="slds-modal__container">
+    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+      <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+      </svg>
+      <span class="slds-assistive-text">Cancel and close</span>
+    </button>
+    <div class="slds-modal__header">
+      <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">New Deliverability Config</h1>
     </div>
-  
-    <!-- /Page -->
-  
-    <script src="javascripts/main.js"></script>
-  </body>
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+      <div class="slds-form-element__control">
+        <div class="slds-form-element">          
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-description" placeholder="Description" class="slds-input" />
+          </div>
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-account" placeholder="Account" class="slds-input" />
+          </div>
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-accountURL" placeholder="Account URL" class="slds-input" />
+          </div>
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-oportunity" placeholder="Oportunity" class="slds-input" />
+          </div>
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-oportunityURL" placeholder="Oportunity URL" class="slds-input" />
+          </div>
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-yearlySendVolume" placeholder="Yearly Send Volume" class="slds-input" />
+          </div>
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-dailySendVolume" placeholder="Daily Send Volume" class="slds-input" />
+          </div>
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-hourlySendVolume" placeholder="Hourly Send Volume" class="slds-input" />
+          </div>
+          <div class="slds-checkbox slds-p-around_x-small">
+            <input type="checkbox" name="options" id="form-element-txnDedicatedIP" value="checkbox-unique-id-446"/>
+            <label class="slds-checkbox__label" for="form-element-txnDedicatedIP">
+              <span class="slds-checkbox_faux"></span>
+              <span class="slds-form-element__label">Are you sending Transactional Messages on a Dedicated IP?</span>
+            </label>
+          </div>
+          <div id="txnWrapper" class="slds-form-element__control slds-p-around_x-small" style="display:none;">
+            <input type="text" id="form-element-txnDailySendVolume" placeholder="Transactional Daily Send Volume" class="slds-input" />
+          </div>
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-txnDedicatedIP" placeholder="Number of BU's that require full branding" class="slds-input" />
+          </div>
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-txnDedicatedIP" placeholder="Number of BU's that require partial branding" class="slds-input" />
+          </div>
+          <div class="slds-checkbox slds-p-around_x-small">
+            <input type="checkbox" name="options" id="form-element-includeSSL" value="checkbox-unique-id-446"/>
+            <label class="slds-checkbox__label" for="form-element-includeSSL">
+              <span class="slds-checkbox_faux"></span>
+              <span class="slds-form-element__label">Are you including 2 SSL SKU's per SAP?</span>
+            </label>
+          </div>
+          <div class="slds-form-element__control slds-p-around_x-small">
+            <input type="text" id="form-element-txnDedicatedIP" placeholder="Are you needeing a Dedicated Database?" class="slds-input" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slds-modal__footer">
+      <button id="btnModal_cancel" class="slds-button slds-button_neutral" aria-label="Cancel and close">Cancel</button>
+      <button class="slds-button slds-button_brand">Save</button>
+    </div>
+  </div>
+</section>
+<div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+</div>
+  <script src="javascripts/main.js"></script>
+</body>
+
 </html>
