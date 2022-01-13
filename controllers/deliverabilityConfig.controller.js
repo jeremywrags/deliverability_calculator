@@ -74,7 +74,7 @@ exports.getConfigs = (createdBy) => {
   var condition = createdBy ? { createdBy: { [Op.iLike]: `%${createdBy}%` } } : null;
 
   return DeliverabilityConfig.findAll({
-    attributes: ['id','description']},
+    attributes: ['id','description', 'oportunity']},
     { where: condition }
   ).then(data => {
       return data;
