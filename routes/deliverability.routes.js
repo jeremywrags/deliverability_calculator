@@ -36,5 +36,6 @@ router.delete("/config", deliverabiltyConfig.deleteAll);
 router.delete("/package", deliverabiltyPackage.deleteAll);
 router.delete("/spec", deliverabilitySpec.deleteAll);
 
+
 module.exports = router;
 

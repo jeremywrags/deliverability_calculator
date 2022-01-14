@@ -70,12 +70,29 @@ exports.findAll2 = (createdBy) => {
     });
 };
 
-exports.getConfigs = (createdBy) => {  
-  var condition = createdBy ? { createdBy: { [Op.iLike]: `%${createdBy}%` } } : null;
-
+exports.getConfigs = (userName) => {  
+  
   return DeliverabilityConfig.findAll({
+    where: {
+      createdBy: userName
+    }
+  }
+   ).then(data => {
+       return data;
+   }).catch(err => {
+       return {
+         message:
+           err.message || "Some error occurred while retrieving tutorials."
+       };
+   });
+ };
+ 
+
+exports.getConfigs2 = (userName) => {  
+  
+ return DeliverabilityConfig.findAll({
     attributes: ['id','description', 'oportunity']},
-    { where: condition }
+    { where: {createdBy: userName} }
   ).then(data => {
       return data;
   }).catch(err => {

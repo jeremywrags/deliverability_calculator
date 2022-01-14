@@ -114,6 +114,7 @@ function loadConfigs(){
   }
   $(document).ready(function () {
 
+   
     loadConfigs();
 
     loadPackages();
@@ -162,7 +163,7 @@ function loadConfigs(){
         url : "/create",
         type: "POST",
         data: { 
-          createdBy:' <%= UserEmail %>', 
+          createdBy:$("#currentUser").val(), 
           description: $("#form-element-description").val(),
           account: $("#form-element-account").val(),
           accountURL: $("#form-element-accountURL").val(),
@@ -209,6 +210,10 @@ function loadConfigs(){
             <tr>
               <td>Oportunity</td>
               <td><a href="` + row.oportunityURL + `">` + row.oportunity +`</a></td>
+            </tr>
+            <tr>
+              <td>Created By</td>
+              <td>` + row.createdBy + `</td>
             </tr>
             <tr>
               <td>Description</td>
