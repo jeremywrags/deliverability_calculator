@@ -124,7 +124,7 @@ router.post("/create", function(req, res, next){
       "TotalTransactionalIPs": Math.round((req.body.txnDailySendVolume/data[0].dailyMaxPerIP)),
       "TotalPrivateDomains": req.body.buPartialBranding,
       "TotalSAPs" : req.body.buFullBranding, 
-      "TotalDedicatedDBs" : req.body.yearlySendVolume > data[0].ddbEmailsPerYear ? 'true' : req.body.dailySendVolume  > data[0].ddbEmailsPerDay ? 'true' : 'false',
+      "DedicatedDB" : req.body.dedicatedDB == 'true' ? 'true' : (req.body.yearlySendVolume > data[0].ddbEmailsPerYear ? 'true' : (req.body.dailySendVolume  > data[0].ddbEmailsPerDay ? 'true' : 'false')),
       "TotalSSL" : req.body.buFullBranding * 2
     };            
     return deliverabiltyConfigs.create2(cfgObject)
